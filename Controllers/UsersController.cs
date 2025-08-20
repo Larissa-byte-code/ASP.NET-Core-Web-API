@@ -39,6 +39,30 @@ namespace ShooperAPI.Controllers
 
             return Ok($"Bienvenue {user.Name} !");
         }
+        //Cette méthode permet à ton frontend (React, par exemple) de récupérer tous les utilisateurs
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers() => await _context.Users.ToListAsync();
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, User updatedUser) {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            user.Name = updatedUser.Name;
+            user.Email = updatedUser.Email;
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id) {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
 
 
     }
